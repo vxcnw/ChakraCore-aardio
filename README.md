@@ -1,7 +1,7 @@
 # chakraCore-bindings-for-aardio
 
-###一个简单的例子
-```javasript
+### 一个简单的例子
+```javascript
 io.open()
 // https://github.com/chakra-core/ChakraCore/wiki/Embedding-ChakraCore
 
