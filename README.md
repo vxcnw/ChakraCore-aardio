@@ -38,7 +38,7 @@ io.print(result)
 var result = jsValue.parse();
 io.print(result)
 
-// 使用 jsValue 后要释放，减少引用次数
+// 使用 jsValue 完毕后要减少引用次数
 jsValue.release();
 
 
