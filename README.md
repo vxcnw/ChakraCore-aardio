@@ -34,7 +34,7 @@ jsValue.addRef();
 var result = jsValue.toString();
 io.print(result)
 
-// 方法二 ，使用辅助函数检测类型后自动转换
+// 方法二 ，使用辅助函数，检测 jsValue类型后然后转换为 aardio 内置的数据类型
 var result = jsValue.parse();
 io.print(result)
 
