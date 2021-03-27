@@ -3,7 +3,8 @@
 ## [chakraCore](https://github.com/chakra-core/ChakraCore) is a Javascript engine with a C API you can use to add support for Javascript to any C or C compatible project. 
 ## [aardio](http://www.aardio.com/)  is an extremely easy-to-use dynamic language, but it is also a hybrid language that allows for rare and very convenient manipulation of static types, so it can directly call API interface functions of static languages such as C, C++, etc.
 
-### 一个简单的例子
+### A simple example
+***
 ```javascript
 io.open()
 // https://github.com/chakra-core/ChakraCore/wiki/Embedding-ChakraCore
