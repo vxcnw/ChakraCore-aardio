@@ -36,7 +36,6 @@ namespace object{
         __set = function(k, v){
         	var tt = type(k);
         	if(tt == type.number){
-        		var index = 
         	}
         	elseif(tt == type.string){
         		var id = getPropertyIdFromName(string);	
