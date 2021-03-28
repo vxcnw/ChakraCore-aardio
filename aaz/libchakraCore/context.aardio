@@ -63,13 +63,20 @@ namespace context{
 		return bufferSize.value;      	
 	}
 	
+	parseSerializedScriptWithCallback = function(){
+		_dll.JsParseSerializedScriptWithCallback()
+	}
+	
+	runSerializedScriptWithCallback = function(){
+		_dll.JsRunSerializedScriptWithCallback()
+	}
+	
 	getAndClearException = function(){
     	var exception = {ptr value};
     	_dll.JsGetAndClearException(exception);
     	return ..aaz.libchakraCore.value(exception.value); 
 	}
-	
-	
+
 	setException = function(exception){
     	_dll.JsHasException(exception);
 	}

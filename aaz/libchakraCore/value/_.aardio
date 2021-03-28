@@ -1,4 +1,6 @@
 ﻿import util.metaProperty;
+import web.json;
+import aaz.libchakraCore.value.object;
 
 var _dll = aaz.libchakraCore._dll;
 var JsDoubleToNumber = _dll.api("JsDoubleToNumber", "int(double doubleValue, pointer value)");
@@ -12,19 +14,32 @@ class value{
 				this.handle = handle; 
 			}
 			case type.boolean {
-				return fromBoolean(handle); 
+				var v = {ptr value};
+				_dll.JsBoolToBoolean(handle, v);	
+				this.handle = v.value;
 			}
 			case type.number {
 				if(..math.isInteger(handle)){
-					return fromInt32(handle);
+					var v = {int value};
+					_dll.JsIntToNumber(handle, v);
+					this.handle = v.value;	
 				}
-				return fromDouble(handle);
+				else {
+					var v = {ptr value};
+					JsDoubleToNumber(handle, v);
+					this.handle = v.value;
+				}
 			}
 			case type.string {
-				return fromString(handle);
+				var v = {ptr value};
+				_dll.JsPointerToString(handle, ..string.len(handle), v);	
+				this.handle = v.value;
 			}
-			else {
-				return ; 
+			case type.table{
+				if(handle[["_struct"]]){
+					return ; 
+				}
+				var json = ..web.json.parse(handle);
 			}
 		}
 	}
@@ -47,46 +62,7 @@ namespace value{
         typedArray = 11;
         dataView = 12;
     }
-    
-   typedArrayType = {
-       int8 = 0;
-       uint8 = 1;
-       uint8Clamped = 2;
-       int16 = 3;
-       uint16 = 4;
-       int32 = 5;
-       uint32 = 6;
-       float32 = 7;
-       float64 = 8;
-   }
-    // aardio boolean -> js value
-	fromBoolean = function(v){
-		var reference = {ptr value};
-		_dll.JsBoolToBoolean(v, reference);	
-		return ..aaz.libchakraCore.value(reference.value);  
-	}
-	
-	// aardio double -> js value
-	fromDouble = function(v){
-		var reference = {ptr value};
-		JsDoubleToNumber(v, reference);	
-		return ..aaz.libchakraCore.value(reference.value);  
-	}
-	
-	// aardio int -> js value
-	fromInt32 = function(v){
-		var reference = {int value};
-		_dll.FromInt32(v, reference);	
-		return ..aaz.libchakraCore.value(reference.value);  
-	}
-	
-	// aardio string -> js value
-	fromString = function(v){
-		var reference = {ptr value};
-		_dll.JsPointerToString(v, ..string.len(v), reference);	
-		return ..aaz.libchakraCore.value(reference.value);  
-	}
-	
+
 	createObject = function(){
 		var reference = {ptr value};
 		_dll.JsCreateObject(v, reference);	
@@ -146,50 +122,45 @@ namespace value{
 		_dll.JsCreateURIError(message, reference);	
 		return ..aaz.libchakraCore.value(reference.value);  	
 	}
-		
+	
 	_meta = {
-		// -> js undefined
  		undefined = {
  			_get = function(){
- 				var v = {ptr value};
- 				_dll.JsGetUndefinedValue(v);
- 				return ..aaz.libchakraCore.value(v.value); 	
+ 				var value = {ptr value};
+ 				_dll.JsGetUndefinedValue(value);
+ 				return ..aaz.libchakraCore.value(value.value); 	
  			}
  		}
  		
- 		// -> js null
  		["null"] = {
  			_get = function(){
- 				var v = {ptr value};
- 				_dll.JsGetNullValue(v);
- 				return ..aaz.libchakraCore.value(v.value); 	
+ 				var value = {ptr value};
+ 				_dll.JsGetNullValue(value);
+ 				return ..aaz.libchakraCore.value(value.value); 	
  			}
  		}
  		
- 		// -> js true
  		["true"] = {
  			_get = function(){
- 				var v = {ptr value};
- 				_dll.JsGetTrueValue(v);
- 				return ..aaz.libchakraCore.value(v.value); 	
+ 				var value = {ptr value};
+ 				_dll.JsGetTrueValue(value);
+ 				return ..aaz.libchakraCore.value(value.value); 	
  			}
  		}
  		
- 		// -> js false
  		["false"] = {
  			_get = function(){
- 				var v = {ptr value};
- 				_dll.JsGetFalseValue(v);
- 				return ..aaz.libchakraCore.value(v.value); 	
+ 				var value = {ptr value};
+ 				_dll.JsGetFalseValue(value);
+ 				return ..aaz.libchakraCore.value(value.value); 	
  			}
  		}
  		
- 		// -> js globalObject
  		globalObject = {
  			_get = function(){
- 				var v = {ptr value};
- 				_dll.JsGetGlobalObject(v);
- 				return ..aaz.libchakraCore.value(v.value); 	
+ 				var value = {ptr value};
+ 				_dll.JsGetGlobalObject(value);
+ 				return ..aaz.libchakraCore.value(value.value); 	
  			}
  		}
 	}
@@ -269,28 +240,28 @@ namespace value{
 			}	
 		}
 		
-		// js boolean -> aardio
+		// js -> aardio
 		toBoolean = function(){
 	   		var value = {bool value};
 	   		_dll.JsBooleanToBool(owner.handle, value);
 	   		return value.value; 
 		}
 		
-		// js double -> aardio
+		// js -> aardio
 		toDouble = function(){
 	   		var value = {double value};
 	   		_dll.JsNumberToDouble(owner.handle, value);
 	   		return value.value; 
 		}
 		
-		// js int -> aardio
+		// js -> aardio
 		toInt32 = function(){
 	   		var value = {int value};
 	   		_dll.JsNumberToInt(owner.handle, value);
 	   		return value.value; 
 		}
 		
-		// js string -> aardio
+		// js -> aardio
 		toString = function(){
 	   		var buffer = {ptr value};
 	   		var length = {INT value};
@@ -298,7 +269,7 @@ namespace value{
 	   		return ..raw.str(buffer.value, true);
 		}
 		
-		// js x -> aardio
+		// js -> aardio
 		parse = function(){
 			select(owner.type) {
 				case valueType.undefined {
@@ -308,7 +279,7 @@ namespace value{
 					return null; 
 				}
 				case valueType.number {
-					return owner.toDouble();
+					return owner.toInt32();
 				}
 				case valueType.string {
 					return owner.toString(); 
@@ -398,9 +369,9 @@ namespace value{
 		}
 		
 		getIndexedProperty = function(index){
-			var propertyReference = {ptr value};
-			_dll.JsDeleteProperty(owner.handle, index, propertyReference);
-			return ..aaz.libchakraCore.value(propertyReference.value); 
+			var result = {ptr value};
+			_dll.JsGetIndexedProperty(owner.handle, index, result);
+			return ..aaz.libchakraCore.value(result.value); 
 		}
 		
 		setIndexedProperty = function(index, value){
